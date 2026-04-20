@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://via.placeholder.com/150x150/1a1a1a/ffffff?text=HSM" alt="Hotel San Martín Logo" width="120" style="border-radius: 15px; margin-bottom: 20px;" />
+  style="border-radius: 15px; margin-bottom: 20px;" />
 
   # 🏨 Sistema de Gestión Hotel San Martín 
   
@@ -94,5 +94,5 @@ Para correr este proyecto en tu entorno local de desarrollo, sigue los pasos a c
 <br />
 
 <div align="center">
-  <i>Desarrollado con ❤️ para el equipo del Hotel San Martín</i>
+  <i>Desarrollado con para el equipo del Hotel San Martín</i>
 </div>

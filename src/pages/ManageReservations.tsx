@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ReservationService } from '../services/reservationService';
+import { DataTable, Column } from '../components/DataTable';
 import '../index.css';
 
 interface ManageReservationsProps {
@@ -42,6 +43,46 @@ export default function ManageReservations({ onBack, onNewReservation }: ManageR
     }
   };
 
+  const columns: Column<any>[] = [
+    { header: 'Código', render: (res: any) => <span style={{ fontWeight: '500' }}>{res.codigo_reserva || '-'}</span> },
+    {
+      header: 'Cliente',
+      render: (res: any) => res.clientes?.razon_social || `ID: ${res.fk_cliente}`
+    },
+    {
+      header: 'Entrada',
+      render: (res: any) => <span style={{ color: 'var(--text-secondary)' }}>{res.fecha_entrada ? new Date(res.fecha_entrada).toLocaleDateString() : '-'}</span>
+    },
+    {
+      header: 'Salida',
+      render: (res: any) => <span style={{ color: 'var(--text-secondary)' }}>{res.fecha_salida ? new Date(res.fecha_salida).toLocaleDateString() : '-'}</span>
+    },
+    {
+      header: 'Estado',
+      render: (res: any) => (
+        <span style={{ 
+          padding: '4px 10px', 
+          borderRadius: '20px', 
+          fontSize: '12px', 
+          fontWeight: '600',
+          backgroundColor: `${getStatusColor(res.estado)}20`,
+          color: getStatusColor(res.estado),
+          border: `1px solid ${getStatusColor(res.estado)}40`
+        }}>
+          {res.estado || 'No especificado'}
+        </span>
+      )
+    },
+    { 
+      header: 'Origen', 
+      render: (res: any) => <span style={{ color: 'var(--text-secondary)' }}>{res.origen || '-'}</span> 
+    },
+    {
+      header: 'Total Est.',
+      render: (res: any) => <span style={{ fontWeight: '600' }}>{res.total_estimado ? `$${Number(res.total_estimado).toLocaleString()}` : '-'}</span>
+    }
+  ];
+
   return (
     <div style={{ width: '100%', overflowX: 'auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
@@ -70,62 +111,12 @@ export default function ManageReservations({ onBack, onNewReservation }: ManageR
           <div className="loader"></div>
         </div>
       ) : (
-        <div style={{ 
-          background: 'rgba(0, 0, 0, 0.2)', 
-          borderRadius: '16px', 
-          border: '1px solid var(--glass-border)',
-          overflow: 'hidden'
-        }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)' }}>
-                <th style={{ padding: '16px', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '13px', textTransform: 'uppercase' }}>Código</th>
-                <th style={{ padding: '16px', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '13px', textTransform: 'uppercase' }}>Cliente</th>
-                <th style={{ padding: '16px', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '13px', textTransform: 'uppercase' }}>Entrada</th>
-                <th style={{ padding: '16px', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '13px', textTransform: 'uppercase' }}>Salida</th>
-                <th style={{ padding: '16px', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '13px', textTransform: 'uppercase' }}>Estado</th>
-                <th style={{ padding: '16px', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '13px', textTransform: 'uppercase' }}>Origen</th>
-                <th style={{ padding: '16px', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '13px', textTransform: 'uppercase' }}>Total Est.</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reservations.length === 0 ? (
-                <tr>
-                  <td colSpan={7} style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>
-                    No hay reservas registradas.
-                  </td>
-                </tr>
-              ) : (
-                reservations.map((res: any) => (
-                  <tr key={res.id_reserva} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', transition: 'background 0.2s' }}>
-                    <td style={{ padding: '16px', fontWeight: '500' }}>{res.codigo_reserva || '-'}</td>
-                    {/* Fallback en caso de que el join no funcione y solo tengamos fk_cliente, o mostramos el objeto clientes */}
-                    <td style={{ padding: '16px' }}>{res.clientes?.razon_social || `ID: ${res.fk_cliente}`}</td>
-                    <td style={{ padding: '16px', color: 'var(--text-secondary)' }}>{res.fecha_entrada ? new Date(res.fecha_entrada).toLocaleDateString() : '-'}</td>
-                    <td style={{ padding: '16px', color: 'var(--text-secondary)' }}>{res.fecha_salida ? new Date(res.fecha_salida).toLocaleDateString() : '-'}</td>
-                    <td style={{ padding: '16px' }}>
-                      <span style={{ 
-                        padding: '4px 10px', 
-                        borderRadius: '20px', 
-                        fontSize: '12px', 
-                        fontWeight: '600',
-                        backgroundColor: `${getStatusColor(res.estado)}20`,
-                        color: getStatusColor(res.estado),
-                        border: `1px solid ${getStatusColor(res.estado)}40`
-                      }}>
-                        {res.estado || 'No especificado'}
-                      </span>
-                    </td>
-                    <td style={{ padding: '16px', color: 'var(--text-secondary)' }}>{res.origen || '-'}</td>
-                    <td style={{ padding: '16px', fontWeight: '600' }}>
-                      {res.total_estimado ? `$${Number(res.total_estimado).toLocaleString()}` : '-'}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+        <DataTable 
+          data={reservations} 
+          columns={columns} 
+          emptyMessage="No hay reservas registradas."
+          keyExtractor={(item) => item.id_reserva}
+        />
       )}
     </div>
   );
