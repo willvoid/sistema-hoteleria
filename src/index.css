@@ -690,3 +690,17 @@ body::after {
     padding: 20px;
   }
 }
+
+/* Dashboard Footer */
+.dashboard-footer {
+  text-align: center;
+  padding: 24px 0 8px 0;
+  margin-top: auto;
+  font-size: 13px;
+  color: var(--text-secondary);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dashboard-footer p {
+  opacity: 0.8;
+}

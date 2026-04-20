@@ -11,6 +11,7 @@ import {
 import ManageClients from './ManageClients';
 import ManageReservations from './ManageReservations';
 import ReservationForm from './ReservationForm';
+import Footer from '../components/Footer';
 
 interface User {
   id: number;
@@ -206,6 +207,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
             )}
           </div>
         )}
+
+        <Footer />
       </div>
     </div>
   );
