@@ -204,7 +204,7 @@ export default function ReservationForm({ onCancel, onCreated, currentUser, rese
             </select>
           </div>
 
-          <div className="input-group" style={{ gridColumn: 'span 2' }}>
+          <div className="input-group span-2">
             <label htmlFor="total_estimado">Total Estimado ($)</label>
             <input 
               id="total_estimado" 
@@ -218,7 +218,7 @@ export default function ReservationForm({ onCancel, onCreated, currentUser, rese
             />
           </div>
 
-          <div className="input-group" style={{ gridColumn: 'span 2' }}>
+          <div className="input-group span-2">
             <label htmlFor="observaciones">Observaciones</label>
             <textarea 
               id="observaciones" 

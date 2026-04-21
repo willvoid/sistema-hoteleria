@@ -331,7 +331,7 @@ export default function CreateClient({ onCancel, onCreated, clientToEdit }: Crea
             </select>
           </div>
 
-          <div className="input-group" style={{ gridColumn: 'span 2' }}>
+          <div className="input-group span-2">
             <label htmlFor="direccion">Dirección Específica</label>
             <input id="direccion" name="direccion" type="text" className="input-field" value={formData.direccion} onChange={handleChange} placeholder="Calle, referencias, etc." />
           </div>
