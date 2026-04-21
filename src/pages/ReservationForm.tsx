@@ -7,9 +7,10 @@ interface ReservationFormProps {
   onCancel: () => void;
   onCreated: () => void;
   currentUser: any;
+  reservationToEdit?: any;
 }
 
-export default function ReservationForm({ onCancel, onCreated, currentUser }: ReservationFormProps) {
+export default function ReservationForm({ onCancel, onCreated, currentUser, reservationToEdit }: ReservationFormProps) {
   const [formData, setFormData] = useState({
     codigo_reserva: '',
     fecha_entrada: '',
@@ -28,6 +29,21 @@ export default function ReservationForm({ onCancel, onCreated, currentUser }: Re
 
   const filterStates = ['Pendiente', 'Confirmada', 'Check-in', 'Check-out', 'Cancelada'];
   const origins = ['Presencial', 'Web', 'Teléfono', 'Booking', 'Airbnb', 'Otro'];
+
+  useEffect(() => {
+    if (reservationToEdit) {
+      setFormData({
+        codigo_reserva: reservationToEdit.codigo_reserva || '',
+        fecha_entrada: reservationToEdit.fecha_entrada ? new Date(reservationToEdit.fecha_entrada).toISOString().split('T')[0] : '',
+        fecha_salida: reservationToEdit.fecha_salida ? new Date(reservationToEdit.fecha_salida).toISOString().split('T')[0] : '',
+        estado: reservationToEdit.estado || 'Pendiente',
+        fk_cliente: reservationToEdit.fk_cliente?.toString() || '',
+        origen: reservationToEdit.origen || 'Presencial',
+        observaciones: reservationToEdit.observaciones || '',
+        total_estimado: reservationToEdit.total_estimado?.toString() || ''
+      });
+    }
+  }, [reservationToEdit]);
 
   useEffect(() => {
     const loadClients = async () => {
@@ -59,16 +75,30 @@ export default function ReservationForm({ onCancel, onCreated, currentUser }: Re
     }
 
     try {
-      const payload = {
-        ...formData,
-        fk_cliente: parseInt(formData.fk_cliente),
-        fk_usuario: currentUser?.id_usuario || currentUser?.id, // Asigna el usuario logueado
-        total_estimado: formData.total_estimado ? parseFloat(formData.total_estimado) : null
-      };
+      if (reservationToEdit) {
+        const updatePayload = {
+          codigo_reserva: formData.codigo_reserva,
+          fecha_entrada: formData.fecha_entrada,
+          fecha_salida: formData.fecha_salida,
+          estado: formData.estado,
+          fk_cliente: parseInt(formData.fk_cliente),
+          origen: formData.origen,
+          observaciones: formData.observaciones,
+          total_estimado: formData.total_estimado ? parseFloat(formData.total_estimado) : null
+        };
+        await ReservationService.updateReservation(reservationToEdit.id_reserva, updatePayload);
+        setSuccess("¡Reserva actualizada exitosamente!");
+      } else {
+        const payload = {
+          ...formData,
+          fk_cliente: parseInt(formData.fk_cliente),
+          fk_usuario: currentUser?.id_usuario || currentUser?.id,
+          total_estimado: formData.total_estimado ? parseFloat(formData.total_estimado) : null
+        };
+        await ReservationService.createReservation(payload);
+        setSuccess("¡Reserva registrada exitosamente!");
+      }
 
-      await ReservationService.createReservation(payload);
-      
-      setSuccess("¡Reserva registrada exitosamente!");
       setTimeout(() => {
         onCreated();
       }, 1500);
@@ -83,8 +113,10 @@ export default function ReservationForm({ onCancel, onCreated, currentUser }: Re
   return (
     <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
       <div className="login-header" style={{ marginBottom: "20px" }}>
-        <h2 className="login-title">Nueva Reserva</h2>
-        <p className="login-subtitle">Ingresa los detalles de la nueva reserva.</p>
+        <h2 className="login-title">{reservationToEdit ? 'Editar Reserva' : 'Nueva Reserva'}</h2>
+        <p className="login-subtitle">
+          {reservationToEdit ? 'Modifica los detalles de la reserva.' : 'Ingresa los detalles de la nueva reserva.'}
+        </p>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -210,7 +242,7 @@ export default function ReservationForm({ onCancel, onCreated, currentUser }: Re
                 <span>Guardando...</span>
               </>
             ) : (
-              'Crear Reserva'
+              reservationToEdit ? 'Actualizar Reserva' : 'Crear Reserva'
             )}
           </button>
         </div>

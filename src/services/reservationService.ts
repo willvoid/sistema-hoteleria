@@ -29,6 +29,15 @@ export const ReservationService = {
     return data;
   },
 
+  updateReservation: async (id: number, reservationData: any) => {
+    const { data, error } = await supabase
+      .from('reservas')
+      .update(reservationData)
+      .eq('id_reserva', id);
+    if (error) throw error;
+    return data;
+  },
+
   getClientsList: async () => {
     // Obtenemos todos los clientes para el dropdown. 
     // Nota: en producción con miles de clientes, esto debería ser un buscador/paginado.

@@ -1,21 +1,28 @@
 import { useEffect, useState } from 'react';
 import { ReservationService } from '../services/reservationService';
 import { DataTable, Column } from '../components/DataTable';
+import ReservationForm from './ReservationForm';
 import '../index.css';
 
 interface ManageReservationsProps {
   onBack: () => void;
   onNewReservation: () => void;
+  currentUser: any;
 }
 
-export default function ManageReservations({ onBack, onNewReservation }: ManageReservationsProps) {
+export default function ManageReservations({ onBack, onNewReservation, currentUser }: ManageReservationsProps) {
   const [reservations, setReservations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const [reservationToEdit, setReservationToEdit] = useState<any | null>(null);
+
   useEffect(() => {
-    fetchReservations();
-  }, []);
+    if (!isEditFormOpen) {
+      fetchReservations();
+    }
+  }, [isEditFormOpen]);
 
   const fetchReservations = async () => {
     try {
@@ -80,8 +87,42 @@ export default function ManageReservations({ onBack, onNewReservation }: ManageR
     {
       header: 'Total Est.',
       render: (res: any) => <span style={{ fontWeight: '600' }}>{res.total_estimado ? `$${Number(res.total_estimado).toLocaleString()}` : '-'}</span>
+    },
+    {
+      header: 'Acciones',
+      align: 'center',
+      render: (res: any) => (
+        <button 
+          onClick={() => {
+            setReservationToEdit(res);
+            setIsEditFormOpen(true);
+          }}
+          className="login-btn"
+          style={{ 
+            width: 'auto', 
+            padding: '6px 16px', 
+            fontSize: '13px', 
+            background: 'rgba(59, 130, 246, 0.2)', 
+            color: '#60a5fa',
+            border: '1px solid rgba(59, 130, 246, 0.4)'
+          }}
+        >
+          Editar
+        </button>
+      )
     }
   ];
+
+  if (isEditFormOpen) {
+    return (
+      <ReservationForm 
+        onCancel={() => setIsEditFormOpen(false)} 
+        onCreated={() => setIsEditFormOpen(false)} 
+        currentUser={currentUser} 
+        reservationToEdit={reservationToEdit}
+      />
+    );
+  }
 
   return (
     <div style={{ width: '100%', overflowX: 'auto' }}>

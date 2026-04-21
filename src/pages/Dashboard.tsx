@@ -203,6 +203,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
               <ManageReservations 
                 onBack={() => navigateTo('home')} 
                 onNewReservation={() => setIsAddingReservation(true)} 
+                currentUser={user}
               />
             )}
           </div>
