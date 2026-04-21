@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ReservationService } from '../services/reservationService';
+import AutocompleteClientes from '../components/AutocompleteClientes';
 import '../index.css';
 
 interface ReservationFormProps {
@@ -104,21 +105,11 @@ export default function ReservationForm({ onCancel, onCreated, currentUser }: Re
 
           <div className="input-group">
             <label htmlFor="fk_cliente">Cliente / Huésped *</label>
-            <select 
-              id="fk_cliente" 
-              name="fk_cliente" 
-              className="input-field" 
+            <AutocompleteClientes 
+              clients={clients} 
               value={formData.fk_cliente} 
-              onChange={handleChange} 
-              required
-            >
-              <option value="">Selecciona un cliente...</option>
-              {clients.map(client => (
-                <option key={client.id_cliente} value={client.id_cliente} style={{ color: "black" }}>
-                  {client.razon_social} {client.documento ? `(${client.documento})` : ''}
-                </option>
-              ))}
-            </select>
+              onChange={(value) => setFormData(prev => ({ ...prev, fk_cliente: value.toString() }))}
+            />
           </div>
 
           <div className="input-group">
