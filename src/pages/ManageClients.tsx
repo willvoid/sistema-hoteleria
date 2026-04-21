@@ -12,6 +12,7 @@ export default function ManageClients({ onBack }: ManageClientsProps) {
   const [clients, setClients] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // States para el flujo C/U
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -158,15 +159,33 @@ export default function ManageClients({ onBack }: ManageClientsProps) {
         </div>
       )}
 
+      <div style={{ marginBottom: '20px' }}>
+        <input 
+          type="text" 
+          className="input-field" 
+          placeholder="Buscar clientes por Razón Social, Documento o Celular..." 
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ maxWidth: '400px' }}
+        />
+      </div>
+
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
           <div className="loader"></div>
         </div>
       ) : (
         <DataTable 
-          data={clients} 
+          data={clients.filter(client => {
+            if (!searchTerm) return true;
+            const lowerSearch = searchTerm.toLowerCase();
+            const matchRazon = client.razon_social?.toLowerCase().includes(lowerSearch);
+            const matchDoc = client.documento?.toLowerCase().includes(lowerSearch);
+            const matchCelular = client.celular?.toLowerCase().includes(lowerSearch);
+            return matchRazon || matchDoc || matchCelular;
+          })} 
           columns={columns} 
-          emptyMessage="No hay clientes registrados en el sistema."
+          emptyMessage="No hay clientes registrados en el sistema o ningún cliente coincide con la búsqueda."
           keyExtractor={(item) => item.id_cliente}
         />
       )}
