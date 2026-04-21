@@ -6,12 +6,15 @@ import {
   LogOut, 
   Menu, 
   X,
-  TrendingUp
+  TrendingUp,
+  CalendarPlus,
+  UserPlus
 } from 'lucide-react';
 import ManageClients from './ManageClients';
 import ManageReservations from './ManageReservations';
 import ReservationForm from './ReservationForm';
 import Footer from '../components/Footer';
+import QuickActions from '../components/QuickActions';
 
 interface User {
   id: number;
@@ -162,26 +165,23 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
               </div>
             </div>
 
-            {/* Quick Actions or Info (Placeholder for future) */}
-            <div className="module-container" style={{ marginTop: '20px' }}>
-              <h2 style={{ fontSize: '20px', marginBottom: '16px' }}>Acciones Rápidas</h2>
-              <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                <button 
-                  className="login-btn" 
-                  style={{ width: 'auto', padding: '12px 24px' }}
-                  onClick={() => { navigateTo('reservas'); setIsAddingReservation(true); }}
-                >
-                  Nueva Reserva
-                </button>
-                <button 
-                  className="login-btn" 
-                  style={{ width: 'auto', padding: '12px 24px', background: 'rgba(255,255,255,0.1)', border: '1px solid var(--glass-border)' }}
-                  onClick={() => navigateTo('clientes')}
-                >
-                  Registrar Cliente
-                </button>
-              </div>
-            </div>
+            {/* Quick Actions Component */}
+            <QuickActions 
+              actions={[
+                {
+                  label: "Nueva Reserva",
+                  icon: <CalendarPlus size={20} />,
+                  onClick: () => { navigateTo('reservas'); setIsAddingReservation(true); },
+                  variant: 'primary'
+                },
+                {
+                  label: "Registrar Cliente",
+                  icon: <UserPlus size={20} />,
+                  onClick: () => navigateTo('clientes'),
+                  variant: 'secondary'
+                }
+              ]}
+            />
           </div>
         )}
 
