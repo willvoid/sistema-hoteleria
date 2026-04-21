@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
-import CreateUser from './CreateUser';
 import bcrypt from 'bcryptjs';
 import '../index.css';
 
@@ -10,7 +9,6 @@ interface LoginProps {
 }
 
 export default function Login({ setUser }: LoginProps) {
-  const [isRegistering, setIsRegistering] = useState(false);
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -52,10 +50,6 @@ export default function Login({ setUser }: LoginProps) {
       setLoading(false);
     }
   };
-
-  if (isRegistering) {
-    return <CreateUser onCancel={() => setIsRegistering(false)} onCreated={() => setIsRegistering(false)} />;
-  }
 
   return (
     <div className="login-container">
@@ -123,7 +117,7 @@ export default function Login({ setUser }: LoginProps) {
         </div>
       )}
 
-      <button onClick={() => setIsRegistering(true)} className="link-btn" style={{ marginTop: '24px' }}>
+      <button type="button" onClick={() => navigate('/registrarse')} className="link-btn" style={{ marginTop: '24px' }}>
         ¿No tienes cuenta? Crear un usuario
       </button>
     </div>
